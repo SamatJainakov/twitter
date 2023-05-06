@@ -14,23 +14,23 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             'password': {'write_only': True}
         }
 
-    def validate_password(self, value):
-        if not len(value) >= 8:
-            raise serializers.ValidationError("Пароль должен быть больше 8 символов")
-        if '1234567890' not in value:
-            raise serializers.ValidationError("Пароль должен содержать числа")
-        if value.upper not in value:
-            raise serializers.ValidationError("Пароль должен содержать заглавные буквы")
-        if value.lower not in value:
-            raise serializers.ValidationError("Пароль должен содержать прописные буквы")
-        if '!@#$%^&*()_+=/|?/.,<>;:"' not in value:
-            raise serializers.ValidationError("Пароль должен содержать спецсимвол")
-        return value
-
     def validate(self, data):
-        if not User.password == data:
-            raise serializers.ValidationError("Пароль не совпадает")
+        if data['password'] != data['password2']:
+            raise serializers.ValidationError('Пароли не совпадают')
         return data
+
+    def validate_password(self, password):
+        if len(password) < 8:
+            raise serializers.ValidationError('Пароль должен быть длиннее 8 символов')
+        if not any(value.isdigit() for value in password):
+            raise serializers.ValidationError('В пароле должны присутсвовать цифры')
+        if not any(value.isupper() for value in password):
+            raise serializers.ValidationError('В пароле должны быть заглавные буквы')
+        if not any(value.islower() for value in password):
+            raise serializers.ValidationError('В пароле должны быть прописные буквы')
+        if not any(value in '!@#$%^&*()_-[]{}<>' for value in password):
+            raise serializers.ValidationError('В пароле должны быть спецсимволы')
+        return password
 
     def create(self, validated_data):
         user = User(
