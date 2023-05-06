@@ -5,21 +5,21 @@ from .views import TweetViewSet, ReplyViewSet
 
 router = DefaultRouter()
 router.register('tweets', TweetViewSet)
-router.register('replies', ReplyViewSet)
+router.register('reply', ReplyViewSet)
 
 
 urlpatterns = [
-    # path('viewset/tweets/', TweetViewSetAPIView.as_view(
+    # path('viewset/tweets/', TweetViewSet.as_view(
     #     {'get': 'list', 'post': 'create'}
     # )),
-    # path('viewset/tweets/<int:pk>/', TweetViewSetAPIView.as_view(
+    # path('viewset/tweets/<int:pk>/', TweetViewSet.as_view(
     #     {'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}
     # )),
     #
-    # path('viewset/posts/', ReplyViewSetAPIView.as_view(
+    # path('viewset/posts/', ReplyViewSet.as_view(
     #     {'get': 'list', 'post': 'create'}
     # )),
-    # path('viewset/posts/<int:pk>/', ReplyViewSetAPIView.as_view(
+    # path('viewset/posts/<int:pk>/', ReplyViewSet.as_view(
     #     {'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}
     # )),
     path('viewset/', include(router.urls))

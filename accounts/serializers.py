@@ -6,12 +6,14 @@ from .models import User, Profile
 class UserRegisterSerializer(serializers.ModelSerializer):
     phone_number = serializers.CharField(max_length=13)
     short_info = serializers.CharField()
+    password2 = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ["username", "password", "profile_image", "phone_number", "short_info"]
+        fields = ["username", "password", "profile_image", "phone_number", "short_info", "password2"]
         extra_kwargs = {
-            'password': {'write_only': True}
+            'password': {'write_only': True},
+            'password2': {'write_only': True}
         }
 
     def validate(self, data):
