@@ -1,42 +1,42 @@
 from rest_framework import serializers
 
-from .models import User, Profile
+from . import models
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     phone_number = serializers.CharField(max_length=13)
     short_info = serializers.CharField()
-    password2 = serializers.CharField(write_only=True)
+    password2 = serializers.CharField(max_length=30, write_only=True)
 
     class Meta:
-        model = User
-        fields = ["username", "password", "profile_image", "phone_number", "short_info", "password2"]
+        model = models.User
+        fields = ['username', 'password', 'password2', 'profile_image', 'phone_number', 'short_info']
         extra_kwargs = {
             'password': {'write_only': True},
-            'password2': {'write_only': True}
         }
 
     def validate(self, data):
+        print(data)
         if data['password'] != data['password2']:
-            raise serializers.ValidationError('Пароли не совпадают')
+            raise serializers.ValidationError('Пароли не совпадают!')
         return data
 
-    def validate_password(self, password):
-        if len(password) < 8:
-            raise serializers.ValidationError('Пароль должен быть длиннее 8 символов')
-        if not any(value.isdigit() for value in password):
-            raise serializers.ValidationError('В пароле должны присутсвовать цифры')
-        if not any(value.isupper() for value in password):
-            raise serializers.ValidationError('В пароле должны быть заглавные буквы')
-        if not any(value.islower() for value in password):
-            raise serializers.ValidationError('В пароле должны быть прописные буквы')
-        if not any(value in '!@#$%^&*()_-[]{}<>' for value in password):
-            raise serializers.ValidationError('В пароле должны быть спецсимволы')
-        return password
+    def validate_password(self, value):
+        special_chars = '[!@#$%^&*(),.?":{}|<>]'
+        if len(value) < 8:
+            raise serializers.ValidationError('Пароль должен содержать как минимум 8 символов!')
+        if not any(char.isdigit() for char in value):
+            raise serializers.ValidationError('Пароль должен содержать хотя бы одну цифру')
+        if not any(char.islower() for char in value) or not any(char.isupper() for char in value):
+            raise serializers.ValidationError('Пароль должен содержать одну одну заглавную и одну прописную букву')
+        if not any(char in special_chars for char in value):
+            raise serializers.ValidationError(f'Пароль должен содержать хотя бы '
+                                              f'один специальный символ: {special_chars}')
+        return value
 
     def create(self, validated_data):
-        user = User(
-            username=validated_data['username']
+        user = models.User(
+            username=validated_data['username'],
         )
         profile_image = validated_data.get('profile_image')
         if profile_image:
@@ -44,7 +44,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         try:
-            profile = Profile.objects.create(
+            profile = models.Profile.objects.create(
                 user=user,
                 phone_number=validated_data['phone_number'],
                 short_info=validated_data['short_info']
