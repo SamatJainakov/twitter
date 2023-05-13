@@ -120,9 +120,6 @@ class ReplyReactionCreateAPIView(generics.CreateAPIView):
     queryset = models.ReplyReaction.objects.all()
     serializer_class = serializers.ReplyReactionSerializer
     permission_classes = [p.IsAuthenticated]
-    pagination_class = LimitOffsetPagination
-    search_fields = ['text', ]
-    ordering_fields = ['updated_at', ]
 
     def perform_create(self, serializer):
         try:
