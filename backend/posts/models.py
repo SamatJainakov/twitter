@@ -21,10 +21,10 @@ def process_image(image, text=None, ext='png', font_type='arial.ttf', font_size=
     if new_width and new_height:
         image.resize((new_width, new_height))
 
-    if text:
-        img_draw = ImageDraw.Draw(image)
-        font = ImageFont.truetype(font_type, font_size)
-        img_draw.text((10, 10), text, font=font)
+    # if text:
+    #     img_draw = ImageDraw.Draw(image)
+    #     font = ImageFont.truetype(font_type, font_size)
+    #     img_draw.text((10, 10), text, font=font)
 
     image_io = io.BytesIO()
     image.save(image_io, ext)
